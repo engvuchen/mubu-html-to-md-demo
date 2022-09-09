@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>幕布HTML转为MD</title>
+  </head>
+  <body>
+    <!-- <h1>测试</h1> -->
+    <input type="file" />
+    <button>点击上传</button>
+    <script>
+      document.querySelector('button').onclick = function () {
+        // 这里会获取一个 files 数组对象 因为是单文件上传取第一个即可
+        let file = document.querySelector('input').files[0];
+        let xhr = new XMLHttpRequest();
+        xhr.open('post', '/upload', true);
+        xhr.onload = function () {
+          let res = JSON.parse(xhr.responseText);
+          console.log(res);
+        };
+        let form = new FormData();
+        form.append('image', file); // 对应 key value
+        xhr.send(form);
+      };
+    </script>
+  </body>
+</html>
