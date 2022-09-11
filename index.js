@@ -1,12 +1,11 @@
 const Koa = require('koa');
-const fs = require('fs');
 const logger = require('koa-logger');
 const koaBody = require('koa-body');
+const { html2md } = require('mubu-html-to-md');
+const fs = require('fs');
 const router = require('@koa/router')();
 
 const app = new Koa();
-
-// middlewares
 
 app.use(logger());
 app.use(
@@ -15,22 +14,17 @@ app.use(
   })
 );
 
-const html = (ctx) => {
-  console.log('ctx', ctx);
-  // ctx.body = 'Hello World!!!';
+const html = ctx => {
   ctx.set('content-type', 'text/html');
   ctx.body = fs.readFileSync('index.html');
 };
 const uploadHandler = async (ctx, next) => {
-  // 客户端上传的文件会在这个对象中存在 ctx.request.files
-  // 读取这个文件, 然后存到 upload 文件夹, 实现简易的存储文件功能
-  console.log('path', ctx.request.files.image.path);
-  let data = fs.readFileSync(ctx.request.files.image.path);
-  // fs.writeFileSync(
-  //   path.join(__dirname, 'upload', ctx.request.files.image.name),
-  //   data
-  // );
-  ctx.body = { status: 1 };
+  // 客户端上传的文件在 ctx.request.files
+  // console.log('ctx', ctx.request.files);
+  let data = fs.readFileSync(ctx?.request?.files['mubu-html']?.filepath) || '';
+  let md = html2md(data) || '';
+  ctx.set('content-type', 'text/markdown');
+  ctx.body = { status: 200, md };
 };
 router.get('/', html);
 router.post('/upload', uploadHandler);
