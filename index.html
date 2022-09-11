@@ -4,15 +4,155 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>幕布HTML转为MD</title>
+    <title>Covert Mubu Html to Md</title>
   </head>
+  <style>
+    html {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 微软雅黑, Arial,
+        sans-serif;
+      line-height: 1.5;
+      color: rgb(81, 90, 110);
+      background: #f7f7f7;
+    }
+    .mt-52 {
+      margin-top: 52px;
+    }
+    .mb-10 {
+      margin-bottom: 10px;
+    }
+    .upload-con {
+      display: inline-block;
+      width: 80%;
+      height: 80%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+    .center {
+      display: inline-block;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    .ivu-upload-drag {
+      background: #fff;
+      border: 1px dashed #dcdee2;
+      border-radius: 4px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      -webkit-transition: border-color 0.2s ease;
+      transition: border-color 0.2s ease;
+    }
+    .icon {
+      position: relative;
+      display: inline-block;
+    }
+    .icon::before {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -44px;
+      display: block;
+      content: '';
+      font-size: 52px;
+      width: 80px;
+      height: 80px;
+      background: no-repeat center/80%
+        url('https://api2.mubu.com/v3/document_image/6d541486-220c-45ef-ab1b-b9267b76ff22-371922.jpg');
+    }
+    .upload-icon::before {
+      position: absolute;
+      display: block;
+      content: '';
+      left: 50%;
+      transform: translateX(-50%);
+      top: -44px;
+      font-size: 52px;
+      width: 80px;
+      height: 80px;
+      background: no-repeat center/80%
+        url('https://api2.mubu.com/v3/document_image/6d541486-220c-45ef-ab1b-b9267b76ff22-371922.jpg');
+    }
+    .github-icon {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      width: 60px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+    }
+    .github-icon::before {
+      position: absolute;
+      display: block;
+      content: '';
+      top: 50%;
+      transform: translateY(-50%);
+      left: -20px;
+      width: 20px;
+      height: 20px;
+      background: no-repeat center/100%
+        url('https://api2.mubu.com/v3/document_image/fcac976b-6488-4a56-8f4a-1562378a8a70-371922.jpg');
+    }
+    .ivu-upload-drag:hover {
+      border: 1px dashed #2d8cf0;
+    }
+    .center > input {
+      display: none;
+    }
+    .center > p {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
   <body>
-    <input type="file" />
-    <button>点击上传</button>
+    <div class="icon github-icon" id="gitHubBtn">Github</div>
+    <div class="ivu-upload-drag upload-con" id="upload-con">
+      <div class="center">
+        <input type="file" id="upload" />
+        <div style="display: inline-block; padding: 20px 0px">
+          <i class="icon upload-icon mt-52 mb-10"></i>
+          <p>Click here to upload</p>
+        </div>
+      </div>
+    </div>
     <script>
-      document.querySelector('button').onclick = async function () {
+      let linkNode = document.querySelector('#gitHubBtn');
+      linkNode.addEventListener('click', function () {
+        console.log('click');
+        window.open('https://github.com/engvuchen/mubu-html-to-md-demo');
+      });
+
+      let uploadNode = document.querySelector('#upload');
+      uploadNode.addEventListener('change', onUpload, false);
+      let uploadConNode = document.querySelector('#upload-con');
+      uploadConNode.addEventListener(
+        'click',
+        function () {
+          uploadNode.click();
+        },
+        false
+      );
+
+      async function onUpload(e) {
         // 单文件上传取第一个即可
-        let file = document.querySelector('input').files[0];
+        // let file = document.querySelector('input').files[0];
+        let file = e.target.files[0];
         let fileName = file?.name || '';
         if (!fileName?.endsWith('.html')) {
           tips('仅支持 HTML 文件');
@@ -26,7 +166,7 @@
           },
         });
         downloadByBlob(`${fileName.replace('.html', '.md')}`, res.md);
-      };
+      }
 
       function request({
         url = '',
